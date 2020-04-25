@@ -10,31 +10,22 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import org.json.JSONObject;
-
 import cz.msebera.android.httpclient.Header;
 
 public class ListviewActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
         SwipeRefreshLayout.OnRefreshListener {
-    private ProgressDialog pDialog;
+
     private ListView lv;
     double latitude;
-    String a;
+    String lat;
     double longitude;
-    String b;
-    String c="https://www.google.com/";
-    // URL to get contacts JSON
+    String lon;
     ProgressDialog mDialog;
     String cc;
     SwipeRefreshLayout mSwipeLayout;
@@ -50,19 +41,14 @@ public class ListviewActivity extends AppCompatActivity implements AdapterView.O
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.kkk);
 
-
-//            ggaa2();
         lv = (ListView) findViewById(R.id.list);
         mainAdapter = new MainAdapter(this, getLayoutInflater());
         lv.setAdapter(mainAdapter);
         lv.setOnItemClickListener(this);
-//            tv2 = (TextView) findViewById(R.id.tv2);
-//            tv3 = (TextView) findViewById(R.id.tv3);
-//            tv2.setText("現在經度:" + a);
-//            tv3.setText("現在緯度:" + b);
-        ggaa();
-        ggaa1();
-        Log.v("QW","QQ"+a);
+
+        getLat();
+        getLon();
+        Log.v("QW","QQ"+lat);
 
         mDialog = new ProgressDialog(this);
 
@@ -72,29 +58,28 @@ public class ListviewActivity extends AppCompatActivity implements AdapterView.O
         loadData();
     }
 
-    private String ggaa(){
+    private String getLat(){
         Intent i=this.getIntent();
         latitude=i.getDoubleExtra("latitude",latitude);
         clickLat=i.getDoubleExtra(" clickLat", clickLat);
-        a=String.valueOf(latitude+ clickLat);
+        lat=String.valueOf(latitude+ clickLat);
 
 
 
-        return a;
+        return lat;
     }
-    private String ggaa1(){
+    private String getLon(){
         Intent i=this.getIntent();
 
         clickLon=i.getDoubleExtra(" clickLon", clickLon);
         longitude= i.getDoubleExtra("longitude", longitude);
-        b=String.valueOf( clickLon+longitude);
+        lon=String.valueOf( clickLon+longitude);
 
-        return b;
+        return lon;
     }
 
     private void loadData(){
-        String urlString   = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+a+","+b+"&rankby=distance&type=restaurant&key=AIzaSyDWF5Al83s2a9P1JctqM3um9usNXEpVa2U&language=zh-tw";
-//        +"&language=zh-TW"
+        String urlString   = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+lat+","+lon+"&rankby=distance&type=restaurant&key=AIzaSyDWF5Al83s2a9P1JctqM3um9usNXEpVa2U&language=zh-tw";
 
         mDialog.show();
 
@@ -130,31 +115,21 @@ public class ListviewActivity extends AppCompatActivity implements AdapterView.O
         JSONObject jsonObject = (JSONObject) mainAdapter.getItem(position);
 
         JSONObject plus_code=jsonObject.optJSONObject("plus_code");
-        String bbb=plus_code.optString("compound_code");
-        String dddd=bbb.substring(10,13);
+        String compound_code=plus_code.optString("compound_code");
+        String compound_codecut=compound_code.substring(10,13);
+        String vicinity=jsonObject.optString("vicinity");
 
-
-
-        String eee=jsonObject.optString("vicinity");
-
-
-
-        Log.v("aqaa","777="+bbb);
-
-        String zzz=jsonObject.optString("name");
-
-
-        String aaa="https://www.google.com.tw/maps/search/";
-
-        cc = aaa+dddd+eee+zzz;
+        Log.v("aqaa","777="+compound_code);
+        String name=jsonObject.optString("name");
+        String google="https://www.google.com.tw/maps/search/";
+        cc = google+compound_codecut+vicinity+name;
         Log.v("aqaa",cc);
 
         Intent i = new Intent(this, WebviewActivity.class);
         i.putExtra("aa", cc);
-        i.putExtra("bb",Double.valueOf(a));
-        i.putExtra("cc",Double.valueOf(b));
-        Log.v("aqaa1",a);
-
+        i.putExtra("bb",Double.valueOf(lat));
+        i.putExtra("cc",Double.valueOf(lon));
+        Log.v("aqaa1",lat);
 
         // 使用準備好的 Intent 來開啟新的頁面
         startActivity(i);

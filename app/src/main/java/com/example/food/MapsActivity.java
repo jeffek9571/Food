@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -17,18 +16,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -36,11 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
-import java.util.ArrayList;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,7 +46,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     double latitude;
     double longitude;
-//    private int PROXIMITY_RADIUS = 300;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
@@ -63,14 +53,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double clickLat;
     double clickLon;
     String urlStringg;
-    String formatted_address;
+    String lat,lng;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -93,7 +82,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             checkLocationPermission();
         }
 
-        //Check if Google Play Services Available or not
         if (!CheckGooglePlayServices()) {
             Log.d("onCreate", "Finishing test case since Google Play Services are not available");
             finish();
@@ -123,16 +111,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return urlStringg;
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -158,18 +136,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Log.d("Hot Text:", response.toString());
 
                         try {
-                            JSONArray bb=response.getJSONArray("results");
-                            JSONObject cc=bb.getJSONObject(0);
+                            JSONArray results=response.getJSONArray("results");
+                            JSONObject cc=results.getJSONObject(0);
 
-//                            JSONArray dd=cc.getJSONArray("formatted_address");
-                            formatted_address=cc.optString("formatted_address");
-                            Log.d("qq",formatted_address);
+                            JSONObject dd=cc.getJSONObject("geometry");
+                            JSONObject ff=dd.getJSONObject("location");
+                            lat=ff.optString("lat");
+                            lng=ff.optString("lng");
+                            Log.d("qq",lat+","+lng);
 
 
                             new AlertDialog.Builder(MapsActivity.this)
                                     .setTitle("選取座標")
 //                        .setMessage("選取座標為"+"\n"+qaaq+"\n"+aqqa+" \n 是否繼續前往表單?")
-                                    .setMessage("選取地點為"+"\n"+formatted_address+"\n 是否繼續前往表單?")
+                                    .setMessage("選取地點為"+"\n"+lat+","+lng+"\n 是否繼續前往表單?")
 
                                     .setPositiveButton("確定前往", new DialogInterface.OnClickListener() {
                                         @Override
@@ -249,18 +229,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
     }
-//    private String getUrl(double latitude, double longitude, String nearbyPlace) {
-//
-//        StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-//        googlePlacesUrl.append("location=" + latitude + "," + longitude);
-//        googlePlacesUrl.append("&radius=" + PROXIMITY_RADIUS);
-//        googlePlacesUrl.append("&type=" +"food");
-//        //googlePlacesUrl.append("&type=" + nearbyPlace);
-//        googlePlacesUrl.append("&sensor=true");
-//        googlePlacesUrl.append("&key=" + "AIzaSyDWF5Al83s2a9P1JctqM3um9usNXEpVa2U");
-//        Log.d("getUrl", googlePlacesUrl.toString());
-//        return (googlePlacesUrl.toString());
-//    }
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -276,14 +244,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mCurrLocationMarker.remove();
         }
 
-        //Place current location marker
         latitude = location.getLatitude();
         longitude = location.getLongitude();
 
-
-
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
@@ -291,7 +255,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mMap.addMarker(markerOptions);
 
-        //move map camera
+
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
 
@@ -318,22 +282,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Asking user if explanation is needed
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-                //Prompt the user once explanation has been shown
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
 
-
             } else {
-                // No explanation needed, we can request the permission.
+
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
@@ -349,12 +306,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
+
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    // permission was granted. Do the
-                    // contacts-related task you need to do.
                     if (ContextCompat.checkSelfPermission(this,
                             Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
@@ -367,32 +322,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 } else {
 
-                    // Permission denied, Disable the functionality that depends on this permission.
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
 
-            // other 'case' lines to check for other permissions this app might request.
-            // You can add here other case statements according to your requirement.
         }
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-//        this.onCreate();
-//        click(view);
-//        onMapReady(mMap);
     }
-
-//    public void click(View view) {
-//        Intent i=new Intent(MapsActivity.this,ListviewActivity.class);
-//        i.putExtra("latitude",latitude);
-//        i.putExtra("longitude",longitude);
-//
-//
-//        Log.v("gg","latitude="+String.valueOf(latitude)+","+"longitude"+String.valueOf(longitude));
-//        startActivity(i);
-//    }
 }

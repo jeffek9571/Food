@@ -3,7 +3,6 @@
  */
 package com.example.food;
 import android.content.Context;
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,19 +10,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 
-/**
- * Created by Knuckles on 2015/12/22.
- */
 public class MainAdapter extends BaseAdapter {
     Context mContext;
     LayoutInflater mInflater;
@@ -43,7 +34,6 @@ public class MainAdapter extends BaseAdapter {
     public MainAdapter(Context context, LayoutInflater inflater) {
         mContext = context;
         mInflater = inflater;
-
         mJsonArray = new JSONArray();
     }
 
@@ -84,36 +74,22 @@ public class MainAdapter extends BaseAdapter {
             holder.rating = (TextView) convertView.findViewById(R.id.rating);
             holder.qq = (TextView) convertView.findViewById(R.id.qq);
 
-//            holder.thumbImageView = (ImageView) convertView.findViewById(R.id.img_thumb);
-//            holder.titleTextView = (TextView) convertView.findViewById(R.id.text_title);
-//            holder.descTextView = (TextView) convertView.findViewById(R.id.text_desc);
-            // hang onto this holder for future recyclage
             convertView.setTag(holder);
         } else {
-            // skip all the expensive inflation/findViewById
-            // and just get the holder you already made
+
             holder = (ViewHolder) convertView.getTag();
         }
-
         // 取得目前這個Row的JSON資料
         JSONObject jsonObject = (JSONObject) getItem(position);
-
         Boolean hasThumb = false;
         if (jsonObject.has("photos")) {
 
             JSONArray photos = jsonObject.optJSONArray("photos");
 
-//            JSONObject d=c.optJSONObject("photo_reference");
-//
-//            Log.v("qq","222="+d);
-
             if(photos.length()!=0) {
                 JSONObject c = photos.optJSONObject(0);
                 String photo_reference=c.optString("photo_reference");
 
-
-//                String xx="https://maps.googleapis.com/maps/api/place/photo?photoreference=";
-//                String yy="&sensor=false&maxheight=1200&maxwidth=1200&key=AIzaSyDWF5Al83s2a9P1JctqM3um9usNXEpVa2U";
                 String url="https://maps.googleapis.com/maps/api/place/photo?photoreference="+photo_reference+"&sensor=false&maxheight=1200&maxwidth=1200&key=AIzaSyDWF5Al83s2a9P1JctqM3um9usNXEpVa2U";
 
                 Log.v("qq","111 "+url);
@@ -132,8 +108,7 @@ public class MainAdapter extends BaseAdapter {
         String vicinty="";
         String rating="";
         String qq="";
-//        String title = "";
-//        String desc = "";
+
         if (jsonObject.has("name")) {
             name = jsonObject.optString("name");
         }
