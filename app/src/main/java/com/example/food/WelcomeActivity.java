@@ -14,6 +14,7 @@ public class WelcomeActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.kk);
         mHandler.sendEmptyMessageDelayed(GOTO_MAIN_ACTIVITY, 1500); //2秒跳轉
+
     }
     private static final int GOTO_MAIN_ACTIVITY = 0;
     @SuppressLint("HandlerLeak")

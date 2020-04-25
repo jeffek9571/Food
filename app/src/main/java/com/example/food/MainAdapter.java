@@ -26,7 +26,7 @@ public class MainAdapter extends BaseAdapter {
         public TextView name;
         public TextView vicinty;
         public TextView rating;
-        public TextView qq;
+//        public TextView qq;
         public ImageView thumbnail;
     }
 
@@ -72,7 +72,7 @@ public class MainAdapter extends BaseAdapter {
             holder.name = (TextView) convertView.findViewById(R.id.name);
             holder.vicinty = (TextView) convertView.findViewById(R.id.vicinity);
             holder.rating = (TextView) convertView.findViewById(R.id.rating);
-            holder.qq = (TextView) convertView.findViewById(R.id.qq);
+//            holder.qq = (TextView) convertView.findViewById(R.id.qq);
 
             convertView.setTag(holder);
         } else {
@@ -107,7 +107,7 @@ public class MainAdapter extends BaseAdapter {
         String name="";
         String vicinty="";
         String rating="";
-        String qq="";
+//        String qq="";
 
         if (jsonObject.has("name")) {
             name = jsonObject.optString("name");
@@ -118,9 +118,9 @@ public class MainAdapter extends BaseAdapter {
         if (jsonObject.has("rating")) {
             rating = jsonObject.optString("rating");
         }
-        if (jsonObject.has("qq")) {
-            qq = jsonObject.optString("qq");
-        }
+//        if (jsonObject.has("qq")) {
+//            qq = jsonObject.optString("qq");
+//        }
 
 
 
@@ -128,8 +128,8 @@ public class MainAdapter extends BaseAdapter {
         holder.name.setText(name);
         holder.vicinty.setText(vicinty);
         holder.rating.setText(rating);
-        holder.qq.setText(qq);
-        Log.v("qq",qq);
+//        holder.qq.setText(qq);
+//        Log.v("qq",qq);
 
 
         return convertView;
