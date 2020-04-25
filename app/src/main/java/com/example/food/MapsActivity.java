@@ -126,30 +126,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 urlStringg ();
                 Log.v("qqqa",clickLat+","+clickLon);
 
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.get(urlStringg, new JsonHttpResponseHandler(
-
-                ) {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        super.onSuccess(statusCode, headers, response);
-                        Log.d("Hot Text:", response.toString());
-
-                        try {
-                            JSONArray results=response.getJSONArray("results");
-                            JSONObject cc=results.getJSONObject(0);
-
-                            JSONObject dd=cc.getJSONObject("geometry");
-                            JSONObject ff=dd.getJSONObject("location");
-                            lat=ff.optString("lat");
-                            lng=ff.optString("lng");
-                            Log.d("qq",lat+","+lng);
-
-
-                            new AlertDialog.Builder(MapsActivity.this)
+                new AlertDialog.Builder(MapsActivity.this)
                                     .setTitle("選取座標")
 //                        .setMessage("選取座標為"+"\n"+qaaq+"\n"+aqqa+" \n 是否繼續前往表單?")
-                                    .setMessage("選取地點為"+"\n"+lat+","+lng+"\n 是否繼續前往表單?")
+                                    .setMessage("選取地點為"+"\n"+clickLat+","+clickLon+"\n 是否繼續前往表單?")
 
                                     .setPositiveButton("確定前往", new DialogInterface.OnClickListener() {
                                         @Override
@@ -171,21 +151,66 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     .show();
 
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
-                        Toast.makeText(getApplicationContext(),
-                                "Error: " + statusCode + " " + throwable.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                        // Log error message
-                        Log.e("Hot Text:", statusCode + " " + throwable.getMessage());
-                    }
-                });
+//                AsyncHttpClient client = new AsyncHttpClient();
+//                client.get(urlStringg, new JsonHttpResponseHandler(
+//
+//                ) {
+//                    @Override
+//                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                        super.onSuccess(statusCode, headers, response);
+//                        Log.d("Hot Text:", response.toString());
+//
+//                        try {
+//                            JSONArray results=response.getJSONArray("results");
+//                            JSONObject cc=results.getJSONObject(0);
+//
+//                            JSONObject dd=cc.getJSONObject("geometry");
+//                            JSONObject ff=dd.getJSONObject("location");
+//                            lat=ff.optString("lat");
+//                            lng=ff.optString("lng");
+//                            Log.d("qq",lat+","+lng);
+//
+//
+//                            new AlertDialog.Builder(MapsActivity.this)
+//                                    .setTitle("選取座標")
+////                        .setMessage("選取座標為"+"\n"+qaaq+"\n"+aqqa+" \n 是否繼續前往表單?")
+//                                    .setMessage("選取地點為"+"\n"+lat+","+lng+"\n 是否繼續前往表單?")
+//
+//                                    .setPositiveButton("確定前往", new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                                            Intent g=new Intent(MapsActivity.this,ListviewActivity.class);
+//                                            g.putExtra(" clickLat", clickLat);
+//                                            g.putExtra(" clickLon", clickLon);
+//                                            startActivity(g);
+//                                        }
+//                                    })
+//                                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                                        }
+//                                    })
+//
+//                                    .show();
+//
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+//                        super.onFailure(statusCode, headers, throwable, errorResponse);
+//                        Toast.makeText(getApplicationContext(),
+//                                "Error: " + statusCode + " " + throwable.getMessage(),
+//                                Toast.LENGTH_LONG).show();
+//                        // Log error message
+//                        Log.e("Hot Text:", statusCode + " " + throwable.getMessage());
+//                    }
+//                });
             }
 
 
